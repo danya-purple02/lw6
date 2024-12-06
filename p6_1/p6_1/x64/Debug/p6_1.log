@@ -1,0 +1,5 @@
+﻿  main.cpp
+C:\prog\PSU\logics\lw6\p6_1\p6_1\main.cpp(9,6): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
+C:\prog\PSU\logics\lw6\p6_1\p6_1\main.cpp(11,32): warning C4101: to_start_with: неиспользованная локальная переменная
+C:\prog\PSU\logics\lw6\p6_1\p6_1\main.cpp(31,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+  p6_1.vcxproj -> C:\prog\PSU\logics\lw6\p6_1\x64\Debug\p6_1.exe
