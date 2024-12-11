@@ -1,5 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -18,53 +20,51 @@ struct Graph
 int** create_adjacency_matrix(int v);
 int cout_matrix(int** G, int v);
 
-int** merge_vertexes(int** g, int size, int first, int second);
-int** edge_contraction(int** g, int size, int first, int second);
-int** delete_vertex(int** g, int size, int vertex);
+int** merge_vertexes_matrix(int** g, int size, int first, int second);
+int** edge_contraction_matrix(int** g, int size, int first, int second);
+int** delete_vertex_matrix(int** g, int size, int vertex);
 
-
-
-/*struct Graph* create_adjacency_list(int vertexes);
+struct Graph* create_adjacency_list(int vertexes);
 struct Node* create_vertex(int vertex);
-void connect_vertexes(struct Graph* graph, int coll, int dest);
-void cout_adjacency_list(struct Graph* graph);*/
+void connect_vertexes(struct Graph* graph, int coll, int dest, bool pattern);
+void cout_adjacency_list(struct Graph* graph);
+
+void merge_vertexes_list(Graph* graph, int first, int second);
+void edge_contraction_list(Graph* graph, int first, int second);
+void delete_vertex_list(Graph* graph, int vertex);
 
 void main()
 {
 	int size_M1 = 0, size_M2 = 0, to_start_with = 0, first_act = 0, second_act = 0;
-	cout << "input first graph size: ";
+	cout << "Input first graph size: ";
 	cin >> size_M1;
 	int** M1 = create_adjacency_matrix(size_M1);
 	cout_matrix(M1, size_M1);
-	
+
 	int choise = 0;
 	bool stop_flag = 0;
 	while (!stop_flag) 
 	{
 		first_act = 0, second_act = 0, choise = 0;
-		cout << "choose action:" << endl << "1 - merge vertexes | 2 - contract edge | 3 - delete vertex | 4 - break " << endl;
+		cout << "Choose action:" << endl << "1 - Merge vertexes | 2 - Contract edge | 3 - Delete vertex | 4 - Exit " << endl; 
 		cin >> choise;
 		switch (choise) 
 		{
 			case 1: 
 			{
-				cout << "input number of first vertex to merge: "; cin >> first_act;
-				cout << "input number of second vertex to merge: "; cin >> second_act;
-				if (first_act > second_act)
+				cout << "Input number of the first vertex to merge: "; cin >> first_act;
+				cout << "Input number of the second vertex to merge: "; cin >> second_act;
+				if (first_act >= size_M1 || second_act >= size_M1 || first_act < 0 || second_act < 0)
 				{
-					cout << "error." << endl << "first number of vertex must be lower than second." << endl << endl;
+					cout << "Error: Vertex numbers must be between 0 and " << size_M1 - 1 << endl;
 				}
 				else if (first_act == second_act)
 				{
-					cout << "error." << endl << "first and second numbers of vertexes can not be equal." << endl << endl;
-				}
-				else if (first_act > size_M1 || second_act > size_M1 || first_act < 0 || second_act < 0)
-				{
-					cout << "error." << endl << "matrix size is " << size_M1 << endl << " -> must type 0 to " << size_M1 << endl << endl;
+					cout << "Error: The vertices must be different." << endl;
 				}
 				else 
 				{
-					M1 = merge_vertexes(M1, size_M1, 1, 2);
+					M1 = merge_vertexes_matrix(M1, size_M1, 1, 2);
 					size_M1--;
 					cout_matrix(M1, size_M1);
 				}
@@ -72,28 +72,24 @@ void main()
 			}
 			case 2: 
 			{
-				cout << "input number of first vertex to contract: "; cin >> first_act;
-				cout << "input number of second vertex to contract: "; cin >> second_act;
+				cout << "Input number of the first vertex to contract: "; cin >> first_act;
+				cout << "Input number of the second vertex to contract: "; cin >> second_act;
 
-				if (first_act > second_act)
+				if (first_act >= size_M1 || second_act >= size_M1 || first_act < 0 || second_act < 0) 
 				{
-					cout << "error." << endl << "first number of vertex must be lower than second." << endl << endl;
+					cout << "Error: Vertex numbers must be between 0 and " << size_M1 - 1 << endl;
 				}
-				else if (first_act == second_act) 
+				else if (first_act == second_act)
 				{
-					cout << "error." << endl << "first and second numbers of vertexes can not be equal." << endl << endl;
+					cout << "Error: The vertices must be different." << endl;
 				}
 				else if (M1[first_act][second_act] == 0)
 				{
-					cout << "error." << endl << "edge does not exist." << endl;
-				}
-				else if (first_act > size_M1 || second_act > size_M1 || first_act < 0 || second_act < 0)
-				{
-					cout << "error." << endl << "matrix size is " << size_M1 << endl << " -> must type 0 to " << size_M1 << endl << endl;
+					cout << "Error: Edge does not exist." << endl;
 				}
 				else
 				{
-					M1 = edge_contraction(M1, size_M1, first_act, second_act);
+					M1 = edge_contraction_matrix(M1, size_M1, first_act, second_act);
 					size_M1--;
 					cout_matrix(M1, size_M1);
 				}
@@ -101,14 +97,14 @@ void main()
 			}
 			case 3:
 			{
-				cout << "input number of vertex to delete: "; cin >> first_act;
+				cout << "Input the vertex to delete: "; cin >> first_act;
 				if (first_act > size_M1 || first_act < 0)
 				{
-					cout << "error." << endl << "matrix size is " << size_M1 << endl << " -> must type 0 to " << size_M1 << endl << endl;
+					cout << "Error: Vertex number must be between 0 and " << size_M1 - 1 << endl;
 				}
 				else
 				{
-					M1 = delete_vertex(M1, size_M1, first_act);
+					M1 = delete_vertex_matrix(M1, size_M1, first_act);
 					size_M1--;
 					cout_matrix(M1, size_M1);
 				}
@@ -121,143 +117,113 @@ void main()
 			}
 			default:
 			{
-				cout << "must type 1 to 4." << endl;
+				cout << "Error: Please choose a valid option (1-4)." << endl;
 				continue;
 			}
 		}
 	}
 
-	/*struct Graph* L1 = create_adjacency_list(size_M1);
+
+
+	struct Graph* L1 = create_adjacency_list(size_M1);
 	for (int i = 0; i < size_M1; i++)
 	{
 		for (int j = 0; j < size_M1; j++)
 		{
 			if (M1[i][j] == 1)
 			{
-				connect_vertexes(L1, i, j);
+				connect_vertexes(L1, i, j, 0);
 			}
 		}
 	}
-	cout_adjacency_list(L1);*/
+	cout_adjacency_list(L1);
 
-	cout << endl << "---------------------------------" << endl;
-
-
-	
-	cout << "input second graph size: ";
-	cin >> size_M2;
-	int** M2 = create_adjacency_matrix(size_M2);
-	cout_matrix(M2, size_M2);
-
-	choise = 0;
-	stop_flag = 0;
-	while (!stop_flag)
+	choise = 0, stop_flag = 0;
+	while (!stop_flag) 
 	{
 		first_act = 0, second_act = 0, choise = 0;
-		cout << "choose action:" << endl << "1 - merge vertexes | 2 - contract edge | 3 - delete vertex | 4 - break " << endl;
+		cout << "Choose action:" << endl << "1 - Merge vertexes | 2 - Contract edge | 3 - Delete vertex | 4 - Exit " << endl;
 		cin >> choise;
 		switch (choise)
 		{
-			case 1:
-			{
-				cout << "input number of first vertex to merge: "; cin >> first_act;
-				cout << "input number of second vertex to merge: "; cin >> second_act;
-				if (first_act > second_act)
-				{
-					cout << "error." << endl << "first number of vertex must be lower than second." << endl << endl;
-				}
-				else if (first_act == second_act)
-				{
-					cout << "error." << endl << "first and second numbers of vertexes can not be equal." << endl << endl;
-				}
-				else if (first_act > size_M2 || second_act > size_M2 || first_act < 0 || second_act < 0)
-				{
-					cout << "error." << endl << "matrix size is " << size_M2 << endl << " -> must type 0 to " << size_M2 << endl << endl;
-				}
-				else
-				{
-					M2 = merge_vertexes(M2, size_M2, 1, 2);
-					size_M2--;
-					cout_matrix(M2, size_M2);
-				}
-				continue;
-			}
-			case 2:
-			{
-				cout << "input number of first vertex to contract: "; cin >> first_act;
-				cout << "input number of second vertex to contract: "; cin >> second_act;
-
-				if (first_act > second_act)
-				{
-					cout << "error." << endl << "first number of vertex must be lower than second." << endl << endl;
-				}
-				else if (first_act == second_act)
-				{
-					cout << "error." << endl << "first and second numbers of vertexes can not be equal." << endl << endl;
-				}
-				else if (M2[first_act][second_act] == 0)
-				{
-					cout << "error." << endl << "edge does not exist." << endl;
-				}
-				else if (first_act > size_M2 || second_act > size_M2 || first_act < 0 || second_act < 0)
-				{
-					cout << "error." << endl << "matrix size is " << size_M2 << endl << " -> must type 0 to " << size_M2 << endl << endl;
-				}
-				else
-				{
-					M2 = edge_contraction(M2, size_M2, first_act, second_act);
-					size_M2--;
-					cout_matrix(M2, size_M2);
-				}
-				continue;
-			}
-			case 3:
-			{
-				cout << "input number of vertex to delete: "; cin >> first_act;
-				if (first_act > size_M2 || first_act < 0)
-				{
-					cout << "error." << endl << "matrix size is " << size_M2 << endl << " -> must type 0 to " << size_M2 << endl << endl;
-				}
-				else
-				{
-					M2 = delete_vertex(M2, size_M2, first_act);
-					size_M2--;
-					cout_matrix(M2, size_M2);
-				}
-				continue;
-			}
-			case 4:
-			{
-				stop_flag = 1;
-				break;
-			}
-			default:
-			{
-				cout << "must type 1 to 4." << endl;
-				continue;
-			}
-		}
-	}
-
-	/*struct Graph* L2 = create_adjacency_list(size_M2);
-	for (int i = 0; i < size_M2; i++)
-	{
-		for (int j = 0; j < size_M2; j++)
+		case 1: 
 		{
-			if (M2[i][j] == 1)
+			cout << "Input number of the first vertex to merge: "; cin >> first_act;
+			cout << "Input number of the second vertex to merge: "; cin >> second_act;
+			if (first_act >= size_M1 || second_act >= size_M1 || first_act < 0 || second_act < 0) 
 			{
-				connect_vertexes(L2, i, j);
+				cout << "Error: Vertex numbers must be between 0 and " << size_M1 - 1 << endl;
 			}
+			else if (first_act == second_act) 
+			{
+				cout << "Error: The vertices must be different." << endl;
+			}
+			else 
+			{
+				merge_vertexes_list(L1, first_act, second_act);
+				size_M1--;
+				cout_adjacency_list(L1);
+			}
+			break;
+		}
+		case 2: 
+		{
+			cout << "Input number of the first vertex to contract: "; cin >> first_act;
+			cout << "Input number of the second vertex to contract: "; cin >> second_act;
+
+			if (first_act >= size_M1 || second_act >= size_M1 || first_act < 0 || second_act < 0) 
+			{
+				cout << "Error: Vertex numbers must be between 0 and " << size_M1 - 1 << endl;
+			}
+			else if (first_act == second_act) 
+			{
+				cout << "Error: The vertices must be different." << endl;
+			}
+			else if (M1[first_act][second_act] == 0)
+			{
+				cout << "Error. Edge does not exist." << endl;
+			}
+			else 
+			{
+				edge_contraction_list(L1, first_act, second_act);
+				size_M1--;
+				cout_adjacency_list(L1);
+			}
+			break;
+		}
+		case 3: 
+		{
+			cout << "Input the vertex to delete: "; cin >> first_act;
+
+			if (first_act >= size_M1 || first_act < 0) 
+			{
+				cout << "Error: Vertex number must be between 0 and " << size_M1 - 1 << endl;
+			}
+			else 
+			{
+				delete_vertex_list(L1, first_act);
+				size_M1--;
+				cout_adjacency_list(L1);
+			}
+			break;
+		}
+		case 4: 
+		{
+			stop_flag = 1;
+			break;
+		}
+		default: 
+		{
+			cout << "Error: Please choose a valid option (1-4)." << endl;
+			break;
+		}
 		}
 	}
-	cout_adjacency_list(L2);*/
+
+
 
 	cout << endl << "---------------------------------" << endl;
-
-
-
 	delete[]M1;
-	delete[]M2;
 	return;
 }
 
@@ -309,7 +275,7 @@ int cout_matrix(int** g, int v)
 	return 1;
 }
 
-int** merge_vertexes(int** g, int size, int first, int second)
+int** merge_vertexes_matrix(int** g, int size, int first, int second)
 {
 	for (int i = 0; i < size; i++)
 	{
@@ -324,12 +290,12 @@ int** merge_vertexes(int** g, int size, int first, int second)
 		g[first][first] = 1;
 	}
 
-	g = delete_vertex(g, size, second);
+	g = delete_vertex_matrix(g, size, second);
 
 	return g;
 }
 
-int** edge_contraction(int** g, int size, int first, int second) 
+int** edge_contraction_matrix(int** g, int size, int first, int second) 
 {
 	for (int i = 0; i < size; i++) 
 	{
@@ -344,11 +310,11 @@ int** edge_contraction(int** g, int size, int first, int second)
 		g[first][first] = 0;
 	}
 
-	g = delete_vertex(g, size, second);
+	g = delete_vertex_matrix(g, size, second);
 	return g;
 }
 
-int** delete_vertex(int** g, int size, int vertex)
+int** delete_vertex_matrix(int** g, int size, int vertex)
 {
 	int** g_new = new int* [size - 1];
 	for (int i = 0; i < size - 1; i++)
@@ -386,7 +352,6 @@ int** delete_vertex(int** g, int size, int vertex)
 
 
 
-/*
 struct Graph* create_adjacency_list(int vertexes)
 {
 	struct Graph* graph = new struct Graph;
@@ -413,23 +378,29 @@ struct Node* create_vertex(int vertex)
 	return new_node;
 }
 
-void connect_vertexes(struct Graph* graph, int coll, int dest)
+void connect_vertexes(struct Graph* graph, int coll, int dest, bool pattern)
 {
 	struct Node* new_node = create_vertex(dest);
 	int i = 0;
-	while (graph->list[i]->vertex != coll)
+	if (pattern == 0)
 	{
-		i++;
+		while (graph->list[i]->vertex != coll)
+		{
+			i++;
+		}
+	}
+	else if (pattern == 1) 
+	{
+		i = coll;
 	}
 
 	struct Node* tmp = graph->list[i];
 	while (tmp->next != NULL)
 	{
-
 		tmp = tmp->next;
 	}
-
 	tmp->next = new_node;
+
 }
 
 void cout_adjacency_list(struct Graph* graph)
@@ -450,4 +421,172 @@ void cout_adjacency_list(struct Graph* graph)
 		}
 		cout << endl;
 	}
-}*/
+}
+
+void merge_vertexes_list(Graph* graph, int first, int second) 
+{
+	Node* second_vertex = graph->list[second];
+	while (second_vertex->next != nullptr) 
+	{
+		connect_vertexes(graph, first, second_vertex->next->vertex, 0);
+		second_vertex = second_vertex->next;
+	}
+
+	for (int i = 0; i < graph->vertexes_amount; i++) 
+	{
+		Node* temp = graph->list[i];
+		while (temp != nullptr) 
+		{
+			if (temp->next != nullptr && temp->next->vertex == second) 
+			{
+				connect_vertexes(graph, i, first, 0);
+				Node* to_delete = temp->next;
+				temp->next = temp->next->next;
+				delete to_delete;
+			}
+			temp = temp->next;
+		}
+	}
+
+	delete_vertex_list(graph, second);	
+	
+	for (int i = 0; i < graph->vertexes_amount; i++)
+	{
+		vector<int> vertexes;
+		vector<int> ::iterator res;
+		Node* tmp = graph->list[i];
+		if (tmp->next != nullptr)
+		{
+			int main_v = tmp->vertex;
+			tmp = tmp->next;
+			while (tmp != nullptr)
+			{
+				vertexes.push_back(tmp->vertex);
+				tmp = tmp->next;
+			}
+			sort(vertexes.begin(), vertexes.end());
+			res = unique(vertexes.begin(), vertexes.end());
+			vertexes.resize(res - vertexes.begin());
+		}
+		graph->list[i]->next = nullptr;
+		for (const auto v : vertexes)
+		{
+			connect_vertexes(graph, i, v, 1);
+		}
+	}
+}
+
+void edge_contraction_list(Graph* graph, int first, int second) 
+{
+	bool loop = 0;
+	Node* tmptmptmp = graph->list[first];
+	tmptmptmp = tmptmptmp->next;
+	while (tmptmptmp != nullptr)
+	{
+		if (tmptmptmp->vertex == first)
+		{
+			loop = 1;
+		}
+		tmptmptmp = tmptmptmp->next;
+	}
+	Node* second_vertex = graph->list[second];
+	while (second_vertex->next != nullptr)
+	{
+		connect_vertexes(graph, first, second_vertex->next->vertex, 0);
+		second_vertex = second_vertex->next;
+	}
+
+	for (int i = 0; i < graph->vertexes_amount; i++)
+	{
+		Node* temp = graph->list[i];
+		while (temp != nullptr)
+		{
+			if (temp->next != nullptr && temp->next->vertex == second)
+			{
+				connect_vertexes(graph, i, first, 0);
+				Node* to_delete = temp->next;
+				temp->next = temp->next->next;
+				delete to_delete;
+			}
+			temp = temp->next;
+		}
+	}
+
+	delete_vertex_list(graph, second);
+
+	for (int i = 0; i < graph->vertexes_amount; i++)
+	{
+		vector<int> vertexes;
+		vector<int> ::iterator res;
+		Node* tmp = graph->list[i];
+		if (tmp->next != nullptr)
+		{
+			int main_v = tmp->vertex;
+			tmp = tmp->next;
+			while (tmp != nullptr)
+			{
+				vertexes.push_back(tmp->vertex);
+				tmp = tmp->next;
+			}
+			sort(vertexes.begin(), vertexes.end());
+			res = unique(vertexes.begin(), vertexes.end());
+			vertexes.resize(res - vertexes.begin());
+			if (i == first && loop != 1)
+			{
+				vector<int> ::iterator ers;
+				for (int z : vertexes)
+				{
+					if (z == first) 
+					{
+						ers = vertexes.begin() + z;
+					}
+				}
+				vertexes.erase(ers);
+			}
+		}
+		graph->list[i]->next = nullptr;
+		for (const auto v : vertexes)
+		{
+			connect_vertexes(graph, i, v, 1);
+		}
+	}
+}
+
+void delete_vertex_list(Graph* graph, int vertex)
+{
+	for (int i = 0; i < graph->vertexes_amount; i++)
+	{
+		Node* temp = graph->list[i];
+		while (temp != nullptr && temp->next != nullptr)
+		{
+			if (temp->next->vertex == vertex)
+			{
+				Node* to_delete = temp->next;
+				temp->next = temp->next->next;
+				delete to_delete;
+			}
+			else
+			{
+				temp = temp->next;
+			}
+		}
+	}
+
+	Node* temp = graph->list[vertex];
+	while (temp != nullptr)
+	{
+		Node* to_delete = temp;
+		temp = temp->next;
+		delete to_delete;
+	}
+
+	graph->list[vertex] = nullptr;
+
+	for (int i = vertex; i < graph->vertexes_amount - 1; i++)
+	{
+		graph->list[i] = graph->list[i + 1];
+	}
+
+	graph->list[graph->vertexes_amount - 1] = nullptr;
+	graph->vertexes_amount--;
+}
