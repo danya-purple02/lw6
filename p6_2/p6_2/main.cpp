@@ -35,7 +35,7 @@ void delete_vertex_list(Graph* graph, int vertex);
 
 void main()
 {
-	int size_M1 = 0, size_M2 = 0, to_start_with = 0, first_act = 0, second_act = 0;
+	int size_M1 = 0, to_start_with = 0, first_act = 0, second_act = 0;
 	cout << "Input first graph size: ";
 	cin >> size_M1;
 	int** M1 = create_adjacency_matrix(size_M1);
