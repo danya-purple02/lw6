@@ -20,7 +20,7 @@ int cout_matrix(int** G, int v);
 
 struct Graph* create_adjacency_list(int vertexes);
 struct Node* create_vertex(int vertex);
-void connect_vertexes(struct Graph* graph, int coll, int dest);
+void connect_vertexes(struct Graph* graph, int row, int dest);
 void cout_adjacency_list(struct Graph* graph);
 
 void main()
@@ -151,19 +151,13 @@ struct Node* create_vertex(int vertex)
 	return new_node;
 }
 
-void connect_vertexes(struct Graph* graph, int coll, int dest)
+void connect_vertexes(struct Graph* graph, int row, int dest)
 {
 	struct Node* new_node = create_vertex(dest);
-	int i = 0;
-	while (graph->list[i]->vertex != coll)
-	{
-		i++;
-	}
 
-	struct Node* tmp = graph->list[i];
+	struct Node* tmp = graph->list[row];
 	while (tmp->next != NULL)
 	{
-
 		tmp = tmp->next;
 	}
 

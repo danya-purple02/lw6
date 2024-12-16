@@ -1,4 +1,5 @@
 ﻿  main.cpp
-C:\prog\PSU\logics\lw6\p6_2\p6_2\main.cpp(39,6): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
-C:\prog\PSU\logics\lw6\p6_2\p6_2\main.cpp(355,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\prog\PSU\logics\lw6\p6_2\p6_2\main.cpp(37,6): warning C4326: возвращаемый тип "main" должен быть "int", а не "void"
+C:\prog\PSU\logics\lw6\p6_2\p6_2\main.cpp(102,13): warning C4804: <=: небезопасное использование типа "bool" в операции
+C:\prog\PSU\logics\lw6\p6_2\p6_2\main.cpp(254,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
   p6_2.vcxproj -> C:\prog\PSU\logics\lw6\p6_2\x64\Debug\p6_2.exe

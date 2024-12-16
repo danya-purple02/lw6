@@ -22,6 +22,7 @@ int cout_matrix(int** G, int v);
 
 int** merge_vertexes_matrix(int** g, int size, int first, int second);
 int** edge_contraction_matrix(int** g, int size, int first, int second);
+int** split_vertex_matrix(int** g, int size, int vertex);
 int** delete_vertex_matrix(int** g, int size, int vertex);
 
 struct Graph* create_adjacency_list(int vertexes);
@@ -46,7 +47,7 @@ void main()
 	while (!stop_flag) 
 	{
 		first_act = 0, second_act = 0, choise = 0;
-		cout << "Choose action:" << endl << "1 - Merge vertexes | 2 - Contract edge | 3 - Delete vertex | 4 - Exit " << endl; 
+		cout << "Choose action:" << endl << "1 - Merge vertexes | 2 - Contract edge | 3 - Split vertex | 4 - Exit " << endl; 
 		cin >> choise;
 		switch (choise) 
 		{
@@ -64,7 +65,7 @@ void main()
 				}
 				else 
 				{
-					M1 = merge_vertexes_matrix(M1, size_M1, 1, 2);
+					M1 = merge_vertexes_matrix(M1, size_M1, first_act, second_act);
 					size_M1--;
 					cout_matrix(M1, size_M1);
 				}
@@ -95,10 +96,25 @@ void main()
 				}
 				continue;
 			}
-			case 3:
+			case 3: 
+			{
+				cout << "Input the vertex to split: "; cin >> first_act;
+				if (!(0 <= first_act <= size_M1))
+				{
+					cout << "Error: Vertex number must be between 0 and " << size_M1 - 1 << endl;
+				}
+				else 
+				{
+					M1 = split_vertex_matrix(M1, size_M1, first_act);
+					size_M1++;
+					cout_matrix(M1, size_M1);
+				}
+				continue;
+			}
+			/*case 4:
 			{
 				cout << "Input the vertex to delete: "; cin >> first_act;
-				if (first_act > size_M1 || first_act < 0)
+				if (first_act >= size_M1 || first_act < 0)
 				{
 					cout << "Error: Vertex number must be between 0 and " << size_M1 - 1 << endl;
 				}
@@ -109,7 +125,7 @@ void main()
 					cout_matrix(M1, size_M1);
 				}
 				continue;
-			}
+			}*/
 			case 4:
 			{
 				stop_flag = 1;
@@ -142,7 +158,7 @@ void main()
 	while (!stop_flag) 
 	{
 		first_act = 0, second_act = 0, choise = 0;
-		cout << "Choose action:" << endl << "1 - Merge vertexes | 2 - Contract edge | 3 - Delete vertex | 4 - Exit " << endl;
+		cout << "Choose action:" << endl << "1 - Merge vertexes | 2 - Contract edge | 3 - Split vertex | 4 - Exit " << endl;
 		cin >> choise;
 		switch (choise)
 		{
@@ -191,22 +207,28 @@ void main()
 			}
 			break;
 		}
-		case 3: 
+
+		case 3:
+		{
+			cout << "ne gotovo :D" << endl;
+			continue;
+		}
+		/*case 4:
 		{
 			cout << "Input the vertex to delete: "; cin >> first_act;
 
-			if (first_act >= size_M1 || first_act < 0) 
+			if (first_act >= size_M1 || first_act < 0)
 			{
 				cout << "Error: Vertex number must be between 0 and " << size_M1 - 1 << endl;
 			}
-			else 
+			else
 			{
 				delete_vertex_list(L1, first_act);
 				size_M1--;
 				cout_adjacency_list(L1);
 			}
 			break;
-		}
+		}*/
 		case 4: 
 		{
 			stop_flag = 1;
@@ -289,7 +311,6 @@ int** merge_vertexes_matrix(int** g, int size, int first, int second)
 	{
 		g[first][first] = 1;
 	}
-
 	g = delete_vertex_matrix(g, size, second);
 
 	return g;
@@ -312,6 +333,36 @@ int** edge_contraction_matrix(int** g, int size, int first, int second)
 
 	g = delete_vertex_matrix(g, size, second);
 	return g;
+}
+
+int** split_vertex_matrix(int** g, int size, int vertex)
+{
+	int** g_new = new int* [size + 1];
+
+	for (int i = 0; i < size + 1; i++)
+	{
+		g_new[i] = new int[size + 1];
+		for (int j = 0; j < size + 1; j++)
+		{
+			if (i < size && j < size)
+			{
+				g_new[i][j] = g[i][j];
+			}
+			else
+			{
+				g_new[i][j] = 0;
+			}
+		}
+	}
+
+	int v_new = vertex + 1;
+	for (int i = 0; i < size + 1; i++) 
+	{
+		g_new[v_new][i] = g_new[i][v_new] = g[vertex][i];
+	}
+	g_new[size][size] = 0;
+
+	return g_new;
 }
 
 int** delete_vertex_matrix(int** g, int size, int vertex)

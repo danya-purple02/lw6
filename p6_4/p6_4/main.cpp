@@ -18,15 +18,27 @@ void main()
 	cin >> size_M2;
 
 	int** M1 = create_adjacency_matrix(size_M1);
+
+	M1[0][0] = 0; M1[0][1] = 1;
+	M1[1][0] = 1; M1[1][1] = 0;
+
 	cout_matrix(M1, size_M1);
 	int** M2 = create_adjacency_matrix(size_M2);
-	cout_matrix(M2, size_M2);
 	
+	M2[0][0] = 0; M2[0][1] = 1; M2[0][2] = 1;
+	M2[1][0] = 1; M2[1][1] = 0; M2[1][2] = 1;
+	M2[1][0] = 1; M2[2][1] = 1; M2[2][2] = 0;
+	
+	cout_matrix(M2, size_M2);
+
+
+
+
 	int** result = cartesian_product_matrix(M1, size_M1, M2, size_M2);
 
 	cout << "Cartesian Product Matrix:" << endl;
 	cout_matrix(result, size_M1 * size_M2);
-	
+
 	for (int i = 0; i < size_M1; i++)
 	{
 		delete[] M1[i];
@@ -78,7 +90,7 @@ int** create_adjacency_matrix(int v)
 
 int cout_matrix(int** g, int v)
 {
-	cout << "    ";
+	cout << "	";
 	for (int i = 0; i < v; i++)
 	{
 		cout << i << " ";
@@ -86,7 +98,7 @@ int cout_matrix(int** g, int v)
 	cout << endl << endl;
 	for (int i = 0; i < v; i++)
 	{
-		cout << i << "   ";
+		cout << i << "	";
 		for (int j = 0; j < v; j++)
 		{
 			cout << g[i][j] << " ";
@@ -98,15 +110,6 @@ int cout_matrix(int** g, int v)
 
 int** cartesian_product_matrix(int** M1, int size_M1, int** M2, int size_M2)
 {
-	if (M1 == nullptr || M2 == nullptr)
-	{
-		throw invalid_argument("One of the matrices is null.");
-	}
-	if (size_M1 <= 0 || size_M2 <= 0)
-	{
-		throw invalid_argument("Matrix sizes must be greater than zero.");
-	}
-
 	int size_product = size_M1 * size_M2;
 
 	int** result = new int* [size_product];
@@ -114,24 +117,30 @@ int** cartesian_product_matrix(int** M1, int size_M1, int** M2, int size_M2)
 	{
 		result[i] = new int[size_product]();
 	}
+	int row = 0;
+	int col = 0;
 
-	for (int i1 = 0; i1 < size_M1; i1++)
+	for (int x1 = 0; x1 < size_M1; x1++)
 	{
-		for (int j1 = 0; j1 < size_M1; j1++)
+		for (int x2 = 0; x2 < size_M2; x2++)
 		{
-			for (int i2 = 0; i2 < size_M2; i2++)
-			{
-				for (int j2 = 0; j2 < size_M2; j2++)
-				{
-					int row = i1 * size_M2 + i2; // result matrix raw index
-					int col = j1 * size_M2 + j2; // result matrix col index
 
-					if ((i1 == j1 && M2[i2][j2] == 1) || (i2 == j2 && M1[i1][j1] == 1))
+			for (int y1 = 0; y1 < size_M1; y1++)
+			{
+				for (int y2 = 0; y2 < size_M2; y2++)
+				{
+					//int row = x1 * size_M2 + x2;
+					//int col = y1 * size_M2 + y2;
+
+					if ((x1 == y1 && M2[x2][y2] == 1) || (x2 == y2 && M1[x1][y1] == 1))
 					{
 						result[row][col] = 1;
 					}
+					col++;
 				}
 			}
+			row++;
+			col = 0;
 		}
 	}
 
